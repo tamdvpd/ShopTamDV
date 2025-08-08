@@ -25,7 +25,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public void signup(SignupRequest request) {
+    public AuthResponse signup(SignupRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new IllegalArgumentException("Username already exists");
         }
@@ -37,13 +37,17 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRoles(Collections.singleton(role));
         userRepository.save(user);
+
+        String token = jwtService.generateAccessToken(user);
+        String refresh = jwtService.generateRefreshToken(user);
+        return new AuthResponse(token, refresh);
     }
 
     public AuthResponse login(LoginRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
-        String token = jwtService.generateToken(user);
+        String token = jwtService.generateAccessToken(user);
         String refresh = jwtService.generateRefreshToken(user);
         return new AuthResponse(token, refresh);
     }
@@ -51,10 +55,10 @@ public class AuthService {
     public AuthResponse refresh(String refreshToken) {
         String username = jwtService.extractUsername(refreshToken);
         User user = userRepository.findByUsername(username).orElseThrow();
-        if (!jwtService.isTokenValid(refreshToken, user)) {
+        if (!jwtService.validate(refreshToken)) {
             throw new IllegalArgumentException("Invalid refresh token");
         }
-        String token = jwtService.generateToken(user);
+        String token = jwtService.generateAccessToken(user);
         String newRefresh = jwtService.generateRefreshToken(user);
         return new AuthResponse(token, newRefresh);
     }

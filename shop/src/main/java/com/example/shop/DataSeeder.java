@@ -2,15 +2,21 @@ package com.example.shop;
 
 import com.example.shop.entity.Category;
 import com.example.shop.entity.Product;
+import com.example.shop.entity.Role;
+import com.example.shop.entity.User;
 import com.example.shop.repository.CategoryRepository;
 import com.example.shop.repository.ProductRepository;
+import com.example.shop.repository.RoleRepository;
+import com.example.shop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -19,9 +25,13 @@ public class DataSeeder implements CommandLineRunner {
 
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) {
+        seedAdmin();
         if (categoryRepository.count() > 0 || productRepository.count() > 0) {
             return;
         }
@@ -46,6 +56,19 @@ public class DataSeeder implements CommandLineRunner {
         ));
 
         log.info("Seeded demo data");
+    }
+
+    private void seedAdmin() {
+        if (userRepository.existsByUsername("admin")) {
+            return;
+        }
+        Role role = roleRepository.findByName("ROLE_ADMIN")
+                .orElseGet(() -> roleRepository.save(new Role(null, "ROLE_ADMIN")));
+        User user = new User();
+        user.setUsername("admin");
+        user.setPassword(passwordEncoder.encode("admin"));
+        user.setRoles(Set.of(role));
+        userRepository.save(user);
     }
 
     private Product createProduct(String name, String slug, BigDecimal price, int stock, Category category) {
