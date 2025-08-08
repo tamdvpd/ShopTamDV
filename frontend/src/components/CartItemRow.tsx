@@ -1,7 +1,6 @@
 "use client";
 
 import { api } from "@/lib/api";
-import { useToast } from "@/components/ui/use-toast";
 
 export default function CartItemRow({
   item,
@@ -10,23 +9,24 @@ export default function CartItemRow({
   item: any;
   onChanged: () => void;
 }) {
-  const { toast } = useToast();
-
-  const updateQty = async (qty: number) => {
+  const changeQty = async (qty: number) => {
     try {
-      await api.put(`/cart/${item.id}`, { quantity: qty });
+      await api(`/cart/items/${item.id}`, {
+        method: "PUT",
+        body: JSON.stringify({ quantity: qty }),
+      });
       onChanged();
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      alert(err.message);
     }
   };
 
   const remove = async () => {
     try {
-      await api.delete(`/cart/${item.id}`);
+      await api(`/cart/items/${item.id}`, { method: "DELETE" });
       onChanged();
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      alert(err.message);
     }
   };
 
@@ -37,13 +37,19 @@ export default function CartItemRow({
         <div>${item.product.price}</div>
       </div>
       <div className="flex items-center space-x-2">
-        <input
-          type="number"
-          min={1}
-          value={item.quantity}
-          onChange={(e) => updateQty(parseInt(e.target.value))}
-          className="w-16 border p-1"
-        />
+        <button
+          className="px-2 border"
+          onClick={() => changeQty(Math.max(1, item.quantity - 1))}
+        >
+          -
+        </button>
+        <span>{item.quantity}</span>
+        <button
+          className="px-2 border"
+          onClick={() => changeQty(item.quantity + 1)}
+        >
+          +
+        </button>
         <button className="text-red-600" onClick={remove}>
           Remove
         </button>
