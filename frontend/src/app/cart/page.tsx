@@ -1,20 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { api } from "@/lib/api";
 import CartItemRow from "@/components/CartItemRow";
-import { useToast } from "@/components/ui/use-toast";
 
 export default function CartPage() {
-  const { toast } = useToast();
   const [items, setItems] = useState<any[]>([]);
 
   const load = async () => {
     try {
-      const data = await api.get("/cart");
+      const data = await api("/cart");
       setItems(data.items || data);
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      alert(err.message);
     }
   };
 
@@ -35,6 +34,12 @@ export default function CartPage() {
       <div className="text-right space-y-1">
         <div>Subtotal: ${subtotal.toFixed(2)}</div>
         <div>Total: ${subtotal.toFixed(2)}</div>
+        <Link
+          href="/checkout"
+          className="inline-block mt-2 px-4 py-2 bg-blue-600 text-white"
+        >
+          Checkout
+        </Link>
       </div>
     </div>
   );

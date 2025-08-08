@@ -2,23 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import { useToast } from "@/components/ui/use-toast";
 
 export default function ProductDetail({
   params,
 }: {
   params: { id: string };
 }) {
-  const { toast } = useToast();
   const [product, setProduct] = useState<any>(null);
+  const [qty, setQty] = useState(1);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const data = await api.get(`/products/${params.id}`);
+        const data = await api(`/products/${params.id}`);
         setProduct(data);
       } catch (err: any) {
-        toast({ title: "Error", description: err.message, variant: "destructive" });
+        alert(err.message);
       }
     };
     load();
@@ -26,9 +25,13 @@ export default function ProductDetail({
 
   const addToCart = async () => {
     try {
-      await api.post(`/cart`, { productId: params.id, quantity: 1 });
+      await api("/cart/items", {
+        method: "POST",
+        body: JSON.stringify({ productId: params.id, quantity: qty }),
+      });
+      alert("Added to cart");
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      alert(err.message);
     }
   };
 
@@ -39,9 +42,21 @@ export default function ProductDetail({
       <h1 className="text-2xl font-bold">{product.name}</h1>
       <p>{product.description}</p>
       <p className="font-semibold">${product.price}</p>
-      <button className="px-4 py-2 bg-green-600 text-white" onClick={addToCart}>
-        Add to Cart
-      </button>
+      <div className="flex items-center space-x-2">
+        <input
+          type="number"
+          min={1}
+          value={qty}
+          onChange={(e) => setQty(parseInt(e.target.value))}
+          className="border p-1 w-20"
+        />
+        <button
+          className="px-4 py-2 bg-green-600 text-white"
+          onClick={addToCart}
+        >
+          Add to cart
+        </button>
+      </div>
     </div>
   );
 }
