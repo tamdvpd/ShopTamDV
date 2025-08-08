@@ -4,8 +4,8 @@
 
 ```bash
 cd shop
-mvn clean package
-mvn spring-boot:run
+./mvnw clean package
+./mvnw spring-boot:run
 ```
 
 Swagger: <http://localhost:8080/swagger-ui.html>
@@ -20,5 +20,7 @@ cp .env.local.example .env.local
 npm install
 npm run dev
 ```
+
+Required env variables are provided in `.env.local.example`.
 
 App: <http://localhost:3000>
