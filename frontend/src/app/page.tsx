@@ -1,17 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import { api, apiList } from "@/lib/api";
 import ProductCard from "@/components/ProductCard";
 
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  image?: string;
+}
+
 export default function HomePage() {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const data = await api("/products?page=0&size=12&sort=id");
-        setProducts(data.items || data);
+        const data = await apiList<Product>(
+          `/products?page=0&size=12&sort=id`
+        );
+        setProducts(data);
       } catch (err: any) {
         alert(err.message);
       }
