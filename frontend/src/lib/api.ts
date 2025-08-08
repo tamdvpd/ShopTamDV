@@ -16,3 +16,10 @@ export async function api(path: string, init: RequestInit = {}) {
   if (res.status === 204) return null;
   return res.json();
 }
+
+export async function apiList<T>(path: string): Promise<T[]> {
+  const data = await api(path);
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.content)) return data.content;
+  return [];
+}
