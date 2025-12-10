@@ -1,11 +1,12 @@
 package com.example.shop.repository;
 
-import com.example.shop.entity.CartItem;
+import com.example.shop.cart.CartItem;
+import com.example.shop.user.User;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
-
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
-    Optional<CartItem> findByCartIdAndProductId(Long cartId, Long productId);
+    List<CartItem> findByUser(User user);
+    Optional<CartItem> findByUserIdAndProductId(Long userId, Long productId);
 }
-
