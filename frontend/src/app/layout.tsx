@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import "./globals.css";
+import NavBar from "@/components/NavBar";
+import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/toaster";
 import { ToastProvider } from "@/components/ui/use-toast";
 
 export const metadata: Metadata = {
-  title: "Shop",
+  title: "TamDv Shop",
+  description: "Mua sắm online cùng TamDv Shop",
 };
 
 export default function RootLayout({
@@ -15,24 +17,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-white">
+      <body>
         <ToastProvider>
-          <nav className="flex items-center p-4 border-b gap-4">
-            <Link href="/" className="font-bold text-xl">
-              Shop
-            </Link>
-            <input
-              type="text"
-              placeholder="Search..."
-              className="flex-1 border p-2"
-            />
-            <div className="space-x-4 whitespace-nowrap">
-              <Link href="/cart">Cart</Link>
-              <Link href="/login">Login</Link>
-              <Link href="/register">Register</Link>
-            </div>
-          </nav>
-          <main className="p-4">{children}</main>
+          <NavBar />
+          <main className="container-section py-8">{children}</main>
+          <Footer />
           <Toaster />
         </ToastProvider>
       </body>

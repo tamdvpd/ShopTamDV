@@ -31,27 +31,38 @@ export default function CartItemRow({
   };
 
   return (
-    <div className="flex items-center justify-between border-b py-2">
-      <div>
-        <div className="font-semibold">{item.product.name}</div>
-        <div>${item.product.price}</div>
+    <div className="flex flex-col gap-3 rounded-xl border bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-center gap-3">
+        {item.product.image && (
+          <img
+            src={item.product.image}
+            alt={item.product.name}
+            className="h-16 w-16 rounded-lg object-cover"
+          />
+        )}
+        <div>
+          <div className="font-semibold text-gray-900">{item.product.name}</div>
+          <div className="text-sm text-gray-500">{item.product.price.toLocaleString("vi-VN")} đ</div>
+        </div>
       </div>
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center gap-3">
+        <div className="flex items-center rounded-lg border bg-gray-50 text-sm">
+          <button
+            className="px-3 py-2 text-gray-600"
+            onClick={() => changeQty(Math.max(1, item.quantity - 1))}
+          >
+            -
+          </button>
+          <span className="min-w-[40px] text-center font-semibold">{item.quantity}</span>
+          <button className="px-3 py-2 text-gray-600" onClick={() => changeQty(item.quantity + 1)}>
+            +
+          </button>
+        </div>
         <button
-          className="px-2 border"
-          onClick={() => changeQty(Math.max(1, item.quantity - 1))}
+          className="text-sm font-medium text-red-600 hover:underline"
+          onClick={remove}
         >
-          -
-        </button>
-        <span>{item.quantity}</span>
-        <button
-          className="px-2 border"
-          onClick={() => changeQty(item.quantity + 1)}
-        >
-          +
-        </button>
-        <button className="text-red-600" onClick={remove}>
-          Remove
+          Xóa
         </button>
       </div>
     </div>
