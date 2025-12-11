@@ -8,7 +8,7 @@
         <version>3.5.4</version>
         <relativePath/>
     </parent>
-    <groupId>com.example.shop</groupId>
+    <groupId>com.tamdvshop</groupId>
     <artifactId>shop</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>shop</name>
