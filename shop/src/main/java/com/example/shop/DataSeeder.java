@@ -1,12 +1,11 @@
 package com.example.shop;
 
-import com.example.shop.entity.Category;
-import com.example.shop.entity.Product;
-import com.example.shop.entity.Role;
-import com.example.shop.entity.User;
+import com.example.shop.category.Category;
+import com.example.shop.product.Product;
+import com.example.shop.user.Role;
+import com.example.shop.user.User;
 import com.example.shop.repository.CategoryRepository;
 import com.example.shop.repository.ProductRepository;
-import com.example.shop.repository.RoleRepository;
 import com.example.shop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +25,6 @@ public class DataSeeder implements CommandLineRunner {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -37,44 +35,40 @@ public class DataSeeder implements CommandLineRunner {
         }
         Category c1 = new Category();
         c1.setName("Books");
-        c1.setSlug("books");
         Category c2 = new Category();
         c2.setName("Electronics");
-        c2.setSlug("electronics");
         Category c3 = new Category();
         c3.setName("Clothes");
-        c3.setSlug("clothes");
         categoryRepository.saveAll(List.of(c1, c2, c3));
 
         productRepository.saveAll(List.of(
-            createProduct("Book A", "book-a", BigDecimal.valueOf(10), 100, c1),
-            createProduct("Book B", "book-b", BigDecimal.valueOf(12), 80, c1),
-            createProduct("Phone", "phone", BigDecimal.valueOf(500), 50, c2),
-            createProduct("Laptop", "laptop", BigDecimal.valueOf(1000), 30, c2),
-            createProduct("Shirt", "shirt", BigDecimal.valueOf(20), 200, c3),
-            createProduct("Jeans", "jeans", BigDecimal.valueOf(40), 150, c3)
+            createProduct("Book A", BigDecimal.valueOf(10), 100, c1),
+            createProduct("Book B", BigDecimal.valueOf(12), 80, c1),
+            createProduct("Phone", BigDecimal.valueOf(500), 50, c2),
+            createProduct("Laptop", BigDecimal.valueOf(1000), 30, c2),
+            createProduct("Shirt", BigDecimal.valueOf(20), 200, c3),
+            createProduct("Jeans", BigDecimal.valueOf(40), 150, c3)
         ));
 
         log.info("Seeded demo data");
     }
 
     private void seedAdmin() {
-        if (userRepository.existsByUsername("admin")) {
-            return;
-        }
-        Role role = roleRepository.findByName("ROLE_ADMIN")
-                .orElseGet(() -> roleRepository.save(new Role(null, "ROLE_ADMIN")));
-        User user = new User();
-        user.setUsername("admin");
-        user.setPassword(passwordEncoder.encode("admin"));
-        user.setRoles(Set.of(role));
-        userRepository.save(user);
+//        if (userRepository.existsByUsername("admin")) {
+//            return;
+//        }
+//        Role role = roleRepository.findByName("ROLE_ADMIN")
+//                .orElseGet(() -> roleRepository.save(new Role(null, "ROLE_ADMIN")));
+//        User user = new User();
+//        user.setUsername("admin");
+//        user.setPassword(passwordEncoder.encode("admin"));
+//        user.setRoles(Set.of(role));
+//        userRepository.save(user);
     }
 
-    private Product createProduct(String name, String slug, BigDecimal price, int stock, Category category) {
+    private Product createProduct(String name, BigDecimal price, int stock, Category category) {
         Product p = new Product();
         p.setName(name);
-        p.setSlug(slug);
         p.setPrice(price);
         p.setStock(stock);
         p.setCategory(category);
